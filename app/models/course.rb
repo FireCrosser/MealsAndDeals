@@ -6,6 +6,8 @@ class Course < ApplicationRecord
   validates :name, presence: true
   validates :price, presence: true
 
+  mount_uploader :image, CourseImageUploader
+
   before_create do
     self.date = Date.today
   end

@@ -34,6 +34,7 @@ gem "pundit"
 gem 'bootstrap'
 gem 'simple_form'
 gem 'haml'
+gem 'carrierwave'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

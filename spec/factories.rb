@@ -10,5 +10,15 @@ FactoryGirl.define do
     u.password "deathstar"
     u.password_confirmation "deathstar"
   end
+
+  factory :course_type do |ct|
+    ct.name 'second'
+  end
+
+  factory :course do |c|
+    c.name 'Varenyky'
+    c.price 12.5
+    course_type
+  end
 end
 

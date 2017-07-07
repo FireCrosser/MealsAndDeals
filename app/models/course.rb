@@ -1,3 +1,12 @@
 class Course < ApplicationRecord
-  has_one :course_type
+  belongs_to :course_type
+  has_many :ordered_courses
+  has_many :orders, through: :ordered_courses
+
+  validates :name, presence: true
+  validates :price, presence: true
+
+  before_create do
+    self.date = Date.today
+  end
 end

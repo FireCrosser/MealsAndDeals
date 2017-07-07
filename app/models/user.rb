@@ -10,6 +10,10 @@ class User < ApplicationRecord
 
   scope :users_not_empty, -> { select('1').limit(1).count }
 
+  def admin?
+    self.role_id == 2
+  end
+
   private
 
   def set_role

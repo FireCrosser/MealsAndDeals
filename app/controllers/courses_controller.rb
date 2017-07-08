@@ -1,6 +1,9 @@
 class CoursesController < ApplicationController
   def index
-    @courses = Course.all
+    if params.has_key?(:date)
+      @courses = Course.by_date(params[:date])
+      render json: @courses
+    end
   end
 
   def new

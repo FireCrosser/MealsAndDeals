@@ -11,4 +11,6 @@ class Course < ApplicationRecord
   before_create do
     self.date = Date.today
   end
+
+  scope :by_date, -> (date) { where(date: date) }
 end

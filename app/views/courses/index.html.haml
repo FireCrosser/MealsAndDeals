@@ -1,11 +1,7 @@
-%ul.nav.nav-tabs{ role: "tablist" }
-  %li.active{ role: "presentation" }
-    %a{ href: "#home", role: "tab", data: { toggle: "tab" }} Home
-  %li{ role: "presentation" }
-    %a{ href: "#prof", role: "tab", data: { toggle: "tab" }} Prof
+= content_for :head do
+  = javascript_include_tag 'courses'
 
-%div.tab-content
-  %div.tab-pane.fade.in.active{ role: "tabpanel", id: "home" }
-    %h3 Home
-  %div.tab-pane.fade{ role: "tabpanel", id: "prof" }
-    %h3 Prof
+%div.tabs-wrapper
+  %ul.nav.nav-pills{ role: "tablist", id: "weekday-tabs" }
+
+  %div.tab-content{ id: "weekday-panes" }

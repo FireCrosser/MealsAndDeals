@@ -36,6 +36,7 @@ gem "pundit"
 gem 'simple_form'
 gem 'haml-rails'
 gem 'carrierwave'
+gem 'json'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -47,6 +48,7 @@ group :development, :test do
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
   gem 'rspec-rails'
+  gem 'rails-controller-testing'
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'database_cleaner'

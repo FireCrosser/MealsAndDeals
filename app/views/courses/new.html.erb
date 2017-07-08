@@ -1,6 +1,0 @@
-<%= simple_form_for @course do |f| %>
-  <%= f.input :name %>
-  <%= f.input :price, as: :float, input_html: { step: 0.01 } %>
-  <%= f.file_field :image %>
-  <%= f.button :submit, 'Save' %>
-<% end %>

@@ -1,3 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
+weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+date = new Date()
+console.log (date.getDay() || 7) - 1 

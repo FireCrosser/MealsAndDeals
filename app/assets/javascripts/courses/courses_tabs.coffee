@@ -4,10 +4,10 @@ todayWeekday = (todayDate.getDay() || 7) - 1
 weekStart = new Date(todayDate)
 if todayWeekday <= 4
   weekStart.setDate(weekStart.getDate() - todayWeekday)
-  console.log weekStart
 else
   weekStart.setDate(weekStart.getDate() + 7 - todayWeekday)
 currentWeekDay = new Date(weekStart)
+
 
 getFormattedDate = (date, format) ->
   day = date.getDate()
@@ -21,6 +21,30 @@ getFormattedDate = (date, format) ->
     .replace("%D", day)
     .replace("%M", month)
     .replace("%Y", year)
+
+loadCoursesData = (pane, date) ->
+  if (pane.find ".courses-wrapper").length == 0
+    coursesWrapper = $('<div></div').appendTo pane
+    coursesWrapper.attr class: 'col-md-10 col-md-offset-1 courses-wrapper'
+    $.get '/courses',
+      date: date,
+      (data) ->
+        if data.length == 0
+          coursesWrapper.append "No courses now"
+        else
+          for key, value of data
+            courseType = $("<div></div>")
+            courseType.attr class: 'course-type'
+            courseType.attr "data-toggle": "modal"
+            courseType.attr "data-target": "#coursesModal"
+            courseTypeName = $("<h3></h3>")
+            courseTypeName.text value.name
+            courseAmount = $("<h5></h5>")
+            courseAmount.text "Amount: " + value.courses.length
+            courseTypeName.appendTo courseType
+            courseAmount.appendTo courseType
+            courseType.appendTo coursesWrapper
+
 
 $ ->
   tabs = $("#weekday-tabs")
@@ -43,14 +67,26 @@ $ ->
     weekdayPane.attr class: "tab-pane fade in weekday-pane"
     if currentWeekDay.getTime() == todayDate.getTime()
       weekdayPane.addClass "active" 
+      loadCoursesData(weekdayPane, todayDate)
     weekdayPane.attr role: "tabpanel"
     weekdayPane.attr id: day.toLowerCase()
-    weekdayPane.append("<h3>" + day + "</h3>")
     $("#weekday-panes").append(weekdayPane)
 
     currentWeekDay.setDate(currentWeekDay.getDate() + 1)
         
   if todayWeekday > 4
-    $(".weekday-tab:first").addClass "active"
+    firstTab = $(".weekday-tab").first()
+    firstTabLink = firstTab.find("a").first()
+    paneId = firstTabLink.attr "href"
+    pane = $('#weekday-panes div' + paneId)
+    date = firstTabLink.attr "data-date"
+    loadCoursesData(pane, date)
+    firstTab.addClass "active"
     $(".weekday-pane:first").addClass "active"
 
+  $('#weekday-tabs a[data-toggle="tab"]').on "shown.bs.tab", (event) ->
+    target = $(event.target)
+    date = target.attr "data-date"
+    paneId = target.attr "href"
+    pane = $('#weekday-panes div' + paneId)
+    loadCoursesData(pane, date)

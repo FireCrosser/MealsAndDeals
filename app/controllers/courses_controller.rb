@@ -1,8 +1,9 @@
 class CoursesController < ApplicationController
   def index
     if params.has_key?(:date)
-      @courses = Course.by_date(params[:date])
-      render json: @courses
+      @course_types = CourseType.with_courses.where_courses_with_date(params[:date])
+      render json: @course_types, only: [:id, :name],
+        include: [courses: { only: [:id, :name, :price, :image] }]
     end
   end
 

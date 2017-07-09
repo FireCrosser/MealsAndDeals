@@ -1,6 +1,5 @@
 weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 todayDate = new Date()
-todayDate.setDate(todayDate.getDate() + 1)
 todayWeekday = (todayDate.getDay() || 7) - 1 
 weekStart = new Date(todayDate)
 if todayWeekday <= 4

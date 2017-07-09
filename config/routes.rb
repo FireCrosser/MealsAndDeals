@@ -4,5 +4,7 @@ Rails.application.routes.draw do
   devise_for :users, path: ''
   root to: "home#index"
   resources :users
-  resources :courses, only: [:index, :new, :create]
+  resources :courses, only: [:index, :create]
+  resources :course_types, path: "course-types", only: [:index]
+  resources :orders, only: [:index]
 end

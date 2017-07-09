@@ -15,12 +15,15 @@ RSpec.describe CoursesController, type: :controller do
 
     it "return index template if request without params" do
       course = FactoryGirl.create(:course)
+
       get :index, params: { date: course.date }
+
       resp = JSON.parse(response.body)
-      expect(resp.first['id'].to_i).to eq(course.id)
-      expect(resp.first['name']).to eq(course.name)
-      expect(resp.first['price'].to_f).to eq(course.price)
-      expect(resp.first['course_type_id'].to_i).to eq(course.course_type_id)
+      courses = resp[0]["courses"]
+      expect(resp[0]['id'].to_i).to eq(course.course_type_id)
+      expect(courses[0]['id'].to_i).to eq(course.id)
+      expect(courses[0]['name']).to eq(course.name)
+      expect(courses[0]['price'].to_f).to eq(course.price)
     end
   end
 end

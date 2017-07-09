@@ -6,10 +6,9 @@
 
   %div.tab-content{ id: "weekday-panes" }
 
-%div.modal.fade{ id: "coursesModal", role: "dialog" }
-  %div.modal-dialog{ role: "document" }
-    %div.modal-content
-      %div.modal-header
-        %button.close{ type: "button", data: { dismiss: "modal" }, aria: { label: "Close" }}
-          %span{aria: { hidden: "true" }} &times;
-        %h4.modal-title Courses
+= render "modals"
+
+-#%button.btn.btn-default.add-course-with-type{ type: "button",
+  -#data: { toggle: "modal", target: "#add-course-with-type-modal" },
+  -#id: "add-course-with-type-button"} "Add course"
+

@@ -1,0 +1,8 @@
+= simple_form_for @course, remote: true, authenticity_token: true do |f|
+  = f.input :name
+  = f.input :price, as: :float, input_html: { step: 0.01 }
+  = f.association :course_type, prompt: "Choose a type"
+  = f.label :image
+  = f.file_field :image
+  = f.button :submit, 'Save'
+

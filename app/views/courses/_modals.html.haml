@@ -1,0 +1,29 @@
+%div.modal.fade{ id: "courses-modal", role: "dialog" }
+  %div.modal-dialog{ role: "document" }
+    %div.modal-content
+      %div.modal-header
+        %button.close{ type: "button", data: { dismiss: "modal" }, aria: { label: "Close" }}
+          %span{aria: { hidden: "true" }} &times;
+        %h4.modal-title Courses
+      %div.modal-body
+        %div.courses
+
+%div.modal.fade{ id: "add-course-modal", role: "dialog" }
+  %div.modal-dialog{ role: "document" }
+    %div.modal-content
+      %div.modal-header
+        %button.close{ type: "button", data: { dismiss: "modal" }, aria: { label: "Close" }}
+          %span{aria: { hidden: "true" }} &times;
+        %h4.modal-title Courses
+      %div.modal-body
+        = render "new"
+
+%div.modal.fade{ id: "add-course-with-type-modal", role: "dialog" }
+  %div.modal-dialog{ role: "document" }
+    %div.modal-content
+      %div.modal-header
+        %button.close{ type: "button", data: { dismiss: "modal" }, aria: { label: "Close" }}
+          %span{aria: { hidden: "true" }} &times;
+        %h4.modal-title Courses
+      %div.modal-body
+        = render "new_with_type"

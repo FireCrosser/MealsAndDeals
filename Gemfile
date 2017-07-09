@@ -36,6 +36,7 @@ gem "pundit"
 gem 'simple_form'
 gem 'haml-rails'
 gem 'carrierwave'
+gem "mini_magick"
 gem 'json'
 
 # Use Capistrano for deployment

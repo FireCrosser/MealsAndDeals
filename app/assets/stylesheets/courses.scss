@@ -1,23 +1,77 @@
 $sapphire-color: #126180;
 
+.courses-wrapper {
+  .add-course-with-type {
+    margin: 10px;
+  }
+}
+
 .course-type {
+  position: relative;
+  display: table;
   float: left;
-  width: 290px;
+  width: 200px;
   cursor: pointer;
   background: $sapphire-color;
   border-radius: 4px;
-  margin: 10px 0;
-
-  &:not(:first-child) {
-    margin-left: 10px;
-  }
-
-  &:not(:last-child) {
-    margin-right: 10px;
-  }
+  margin: 10px;
+  text-align: center;
+  padding: 15px 0 5px 0;
 
   h1, h2, h3, h4, h5, h6 {
+    display: table-row;
     text-align: center;
+    vertical-align: top;
     color: white;
+    margin: 0;
+  }
+
+  .course-type-name {
+    height: 2rem;
+    font-size: 2em;
+  }
+
+  .course-type-amount {
+    height: 3rem;
+    font-size: 0.8em;
+  }
+
+  .add-course-wrapper {
+    display: table-cell;
+    text-align: center;
+    vertical-align: bottom;
+  }
+
+  .add-course {
+    color: #c5cfe0;
+    text-decoration: none;
+
+    &:hover {
+      color: #518aa0;
+    }
+  }
+}
+
+#courses-modal {
+  .modal-body {
+
+    .course-radio {
+      
+      padding: 4px;
+
+      * {
+        display: inline;
+        margin: 4px;
+      }
+
+      .course-image {
+        width: 5rem;
+        height: 5rem;
+      }
+    }
+
+    .course-selected {
+      background: #b5b8bc;
+    }
   }
 }

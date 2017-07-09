@@ -1,5 +1,6 @@
-= simple_form_for @course do |f|
+= simple_form_for @course, remote: true, authenticity_token: true do |f|
   = f.input :name
   = f.input :price, as: :float, input_html: { step: 0.01 }
   = f.file_field :image
+  = f.input :course_type_id, as: :hidden
   = f.button :submit, 'Save'

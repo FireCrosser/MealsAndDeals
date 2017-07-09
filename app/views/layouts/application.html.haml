@@ -8,7 +8,9 @@
     = javascript_include_tag 'application'
     = yield :head
   %body
-    %p.notice= notice
-    %p.alert= alert
     -#= button_to "Sign out", destroy_user_session_path, method: :delete, class: "btn btn-default"
-    = yield
+    = render "layouts/header"
+    %div.container
+      %p.notice= notice
+      %p.alert= alert
+      = yield

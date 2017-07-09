@@ -1,0 +1,2 @@
+class OrderedCoursesController < ApplicationController
+end

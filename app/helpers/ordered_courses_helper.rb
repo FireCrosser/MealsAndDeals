@@ -1,0 +1,2 @@
+module OrderedCoursesHelper
+end

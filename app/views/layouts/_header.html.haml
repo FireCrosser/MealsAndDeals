@@ -1,0 +1,19 @@
+%header
+  %nav.navbar.navbar-default.navbar-static-top
+    %div.container
+      %div.navbar-header
+        = link_to root_path, class: "navbar-brand" do
+          %span Meals And Deals
+      %div.navbar-collapse
+        %ul.nav.navbar-nav
+          %li
+            = link_to "Home", root_path
+          %li
+            = link_to "Menu", courses_path
+          %li
+            = link_to "Orders", orders_path
+        %ul.nav.navbar-nav.navbar-right
+          %li
+            = link_to "Profile", root_path
+          %li
+            = link_to "Log out", courses_path

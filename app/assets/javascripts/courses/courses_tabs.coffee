@@ -1,4 +1,5 @@
-weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+weekdays = {"monday": {}, "tuesday": {},
+"wednesday": {}, "thursday": {}, "friday": {}}
 todayDate = new Date()
 todayWeekday = (todayDate.getDay() || 7) - 1 
 weekStart = new Date(todayDate)
@@ -23,9 +24,9 @@ getFormattedDate = (date, format) ->
     .replace("%M", month)
     .replace("%Y", year)
 
-loadCoursesData = (pane, date) ->
+loadCoursesData = (pane, date, weekday) ->
   localDate = new Date(date)
-  if (pane.find ".courses-wrapper").length == 0
+  if (weekdays[weekday] == undefined || $.isEmptyObject(weekdays[weekday]))
     coursesWrapper = $('<div></div').appendTo pane
     coursesWrapper.attr class: 'col-md-10 col-md-offset-1 courses-wrapper'
     if localDate.getTime() == todayDate.getTime()
@@ -42,7 +43,7 @@ loadCoursesData = (pane, date) ->
     $.get '/courses',
       date: getFormattedDate(localDate, "%Y-%M-%D"), 
       (data) ->
-        coursesData = data
+        weekdays[weekday] = data
         if data.length == 0
           coursesWrapper.append "No courses now"
         else
@@ -75,7 +76,7 @@ loadCoursesData = (pane, date) ->
 
 $ ->
   tabs = $("#weekday-tabs")
-  for day in weekdays
+  for day, data of weekdays
     weekdayTab = $("<li></li>")
     weekdayTab.attr role: "presentation"
     weekdayTab.attr class: "weekday-tab"
@@ -85,8 +86,9 @@ $ ->
     dayLink.attr role: "tab"
     dayLink.attr "data-toggle": "tab"
     dayLink.attr "data-date": currentWeekDay
+    dayLink.attr "data-weekday": day
     dayLink.attr href: "#" + day.toLowerCase()
-    dayLink.text day + ' ' + getFormattedDate(currentWeekDay, "%D.%M.%Y")
+    dayLink.text day.charAt(0).toUpperCase() + day.slice(1) + ' ' + getFormattedDate(currentWeekDay, "%D.%M.%Y")
     weekdayTab.append(dayLink)
     tabs.append(weekdayTab)
 
@@ -94,9 +96,10 @@ $ ->
     weekdayPane.attr class: "tab-pane fade in weekday-pane"
     if currentWeekDay.getTime() == todayDate.getTime()
       weekdayPane.addClass "active" 
-      loadCoursesData(weekdayPane, todayDate)
+      loadCoursesData(weekdayPane, todayDate, day)
     weekdayPane.attr role: "tabpanel"
-    weekdayPane.attr id: day.toLowerCase()
+    weekdayPane.attr id: day
+    weekdayPane.attr "data-weekday": day
     $("#weekday-panes").append(weekdayPane)
 
     currentWeekDay.setDate(currentWeekDay.getDate() + 1)
@@ -106,23 +109,26 @@ $ ->
     firstTabLink = firstTab.find("a").first()
     paneId = firstTabLink.attr "href"
     pane = $('#weekday-panes div' + paneId)
-    date = firstTabLink.attr "data-date"
-    loadCoursesData(pane, date)
+    date = firstTabLink.data "date"
+    day = firstTabLink.data "weekday"
+    loadCoursesData(pane, date, day)
     firstTab.addClass "active"
     $(".weekday-pane:first").addClass "active"
 
-  $('#weekday-tabs a[data-toggle="tab"]').on "shown.bs.tab", (event) ->
-    target = $(event.target)
-    date = target.attr "data-date"
-    paneId = target.attr "href"
+  $('#weekday-tabs a[data-toggle="tab"]').on "show.bs.tab", (event) ->
+    target = $(event.target)[0]
+    date = $(target).data "date"
+    day = $(target).data "weekday"
+    paneId = $(target).attr "href"
     pane = $('#weekday-panes div' + paneId)
-    loadCoursesData(pane, date)
+    loadCoursesData(pane, date, day)
 
   $("#weekday-panes").on "click", ".course-type", (event) ->
     event.stopPropagation()
     courseType = $(event.target).closest(".course-type")
     if event.target.tagName == "A"
-      $("#course_course_type_id").attr value: $(courseType).data "course-type-id"
+      $("#course_course_type_id")
+        .attr value: $(courseType).data "course-type-id"
       $("#add-course-modal .modal-title").first().text "Add course to \"" + 
         courseType.find(".course-type-name")[0].innerText + "\" group"
       $("#add-course-modal").modal("show")
@@ -130,10 +136,9 @@ $ ->
       modal = $("#courses-modal")
 
       courseTypeId = courseType.data "course-type-id"
-      console.log courseTypeId
       $(modal).attr "data-course-type-id": courseTypeId
-      console.log coursesData
-      courses = coursesData[courseTypeId].courses
+      weekday = $(event.target).closest(".weekday-pane").data "weekday"
+      courses = weekdays[weekday][courseTypeId].courses
       modalBody = $(modal).find(".modal-body").first()
       for course in courses
         courseDiv = $("<div></dev>")
@@ -152,9 +157,13 @@ $ ->
 
   $("#courses-modal").find(".modal-body")
     .first().on "click", ".course-radio", (event) ->
-      $(event.target).parent()
+      target = event.target
+      $(target).closest('.modal-body')
         .find(".course-radio").removeClass "course-selected"
-        $(event.target).addClass "course-selected"
+        if target.getClass == 'course-radio'
+          $(target).addClass "course-selected"
+        else
+          $(target).closest('.course-radio').addClass "course-selected"
 
   $("#courses-modal").on "hidden.bs.modal", (event) ->
     $("#courses-modal").removeAttr "data-course-type-id" 

@@ -1,7 +1,9 @@
 $sapphire-color: #126180;
+$porcelain: #f4f5f6;
+$periwinkle-gray: #cadbec;
 
 .courses-wrapper {
-  .add-course-with-type {
+  .action-button-wrapper {
     margin: 10px;
   }
 }
@@ -54,10 +56,18 @@ $sapphire-color: #126180;
 
 #courses-modal {
   .modal-body {
+    padding: 5px;
 
     .course-radio {
       
-      padding: 4px;
+      padding: 4px 2px;
+      margin: 0.5rem 0;
+      cursor: pointer;
+
+      &:hover {
+        background: $porcelain;
+        border-right: 0.5rem solid $sapphire-color;
+      }
 
       * {
         display: inline;
@@ -71,7 +81,15 @@ $sapphire-color: #126180;
     }
 
     .course-selected {
-      background: #b5b8bc;
+      background: $periwinkle-gray;
+
+      &:hover {
+        background: $periwinkle-gray;
+      }
     }
   }
+}
+
+.action-button {
+  display: none;
 }

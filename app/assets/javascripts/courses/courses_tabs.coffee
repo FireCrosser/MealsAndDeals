@@ -1,5 +1,7 @@
 weekdays = {"monday": {}, "tuesday": {},
 "wednesday": {}, "thursday": {}, "friday": {}}
+order = {}
+
 todayDate = new Date()
 todayWeekday = (todayDate.getDay() || 7) - 1 
 weekStart = new Date(todayDate)
@@ -8,8 +10,6 @@ if todayWeekday <= 4
 else
   weekStart.setDate(weekStart.getDate() + 7 - todayWeekday)
 currentWeekDay = new Date(weekStart)
-
-coursesData = []
 
 getFormattedDate = (date, format) ->
   day = date.getDate()
@@ -30,16 +30,12 @@ loadCoursesData = (pane, date, weekday) ->
     coursesWrapper = $('<div></div').appendTo pane
     coursesWrapper.attr class: 'col-md-10 col-md-offset-1 courses-wrapper'
     if localDate.getTime() == todayDate.getTime()
-      acwtButtonWrapper = $('<div></div>')
-      acwtButtonWrapper.appendTo coursesWrapper
-      addCourseWithTypeButton = $('<button></button>')
-      addCourseWithTypeButton.attr class: 'btn btn-default add-course-with-type'
-      addCourseWithTypeButton.attr type: 'button'
-      addCourseWithTypeButton.attr 'data-toggle': 'modal'
-      addCourseWithTypeButton.attr 'data-target': '#add-course-with-type-modal'
-      addCourseWithTypeButton.attr id: '#add-course-with-type-button'
-      addCourseWithTypeButton.text "Add course"
-      addCourseWithTypeButton.appendTo acwtButtonWrapper
+      actionButtonWrapper = $("<div></div>")
+      actionButtonWrapper.attr class: 'action-button-wrapper'
+      actionButton = $(".action-button").clone()
+      $(actionButton).css display: "initial"
+      actionButton.appendTo actionButtonWrapper
+      actionButtonWrapper.appendTo coursesWrapper
     $.get '/courses',
       date: getFormattedDate(localDate, "%Y-%M-%D"), 
       (data) ->
@@ -50,9 +46,9 @@ loadCoursesData = (pane, date, weekday) ->
           for key, value of data
             courseType = $("<div></div>")
             courseType.attr class: 'course-type'
-            courseType.attr "data-course-type-id":key 
-            courseType.attr "data-toggle": "modal"
-            courseType.attr "data-target": "#courses-modal"
+            courseType.data "course-type-id": key 
+            courseType.data "toggle": "modal"
+            courseType.data "target": "#courses-modal"
             courseTypeName = $("<h3></h3>")
             courseTypeName.attr class: 'course-type-name' 
             courseTypeName.text value.name
@@ -68,8 +64,8 @@ loadCoursesData = (pane, date, weekday) ->
               addCourseButton.attr type: "button"
               addCourseButton.attr class: 'btn btn-link add-course'
               addCourseButton.text "Add"
-              addCourseButton.attr "data-toggle": "modal"
-              addCourseButton.attr "data-target": "#add-course-modal"
+              addCourseButton.data "toggle": "modal"
+              addCourseButton.data "target": "#add-course-modal"
               addCourseButton.appendTo addCourseWrapper
               addCourseWrapper.appendTo courseType
             courseType.appendTo coursesWrapper
@@ -84,9 +80,9 @@ $ ->
       weekdayTab.addClass "active" 
     dayLink = $("<a></a>")
     dayLink.attr role: "tab"
-    dayLink.attr "data-toggle": "tab"
-    dayLink.attr "data-date": currentWeekDay
-    dayLink.attr "data-weekday": day
+    dayLink.data "toggle": "tab"
+    dayLink.data "date": currentWeekDay
+    dayLink.data "weekday": day
     dayLink.attr href: "#" + day.toLowerCase()
     dayLink.text day.charAt(0).toUpperCase() + day.slice(1) + ' ' + getFormattedDate(currentWeekDay, "%D.%M.%Y")
     weekdayTab.append(dayLink)
@@ -99,7 +95,7 @@ $ ->
       loadCoursesData(weekdayPane, todayDate, day)
     weekdayPane.attr role: "tabpanel"
     weekdayPane.attr id: day
-    weekdayPane.attr "data-weekday": day
+    weekdayPane.data "weekday": day
     $("#weekday-panes").append(weekdayPane)
 
     currentWeekDay.setDate(currentWeekDay.getDate() + 1)
@@ -125,25 +121,25 @@ $ ->
 
   $("#weekday-panes").on "click", ".course-type", (event) ->
     event.stopPropagation()
-    courseType = $(event.target).closest(".course-type")
+    courseType = $(event.target).closest(".course-type")[0]
     if event.target.tagName == "A"
       $("#course_course_type_id")
         .attr value: $(courseType).data "course-type-id"
       $("#add-course-modal .modal-title").first().text "Add course to \"" + 
-        courseType.find(".course-type-name")[0].innerText + "\" group"
+        $(courseType).find(".course-type-name")[0].innerText + "\" group"
       $("#add-course-modal").modal("show")
     else
       modal = $("#courses-modal")
 
-      courseTypeId = courseType.data "course-type-id"
-      $(modal).attr "data-course-type-id": courseTypeId
+      courseTypeId = $(courseType).data "course-type-id"
+      $(modal).data "course-type-id": courseTypeId
       weekday = $(event.target).closest(".weekday-pane").data "weekday"
       courses = weekdays[weekday][courseTypeId].courses
       modalBody = $(modal).find(".modal-body").first()
       for course in courses
         courseDiv = $("<div></dev>")
         courseDiv.attr class: "course-radio row"
-        courseDiv.attr "data-id": course.id
+        courseDiv.data "id": course.id
         courseImage = $("<img/>")
         courseImage.attr src: course.image.url
         courseImage.addClass "course-image"
@@ -160,12 +156,29 @@ $ ->
       target = event.target
       $(target).closest('.modal-body')
         .find(".course-radio").removeClass "course-selected"
-        if target.getClass == 'course-radio'
-          $(target).addClass "course-selected"
-        else
-          $(target).closest('.course-radio').addClass "course-selected"
+      course = target
+      courseTypeId = $("#courses-modal").data "course-type-id"
+      if target.getClass != 'course-radio'
+        course = $(target).closest('.course-radio')
+      $(course).addClass "course-selected"
+      order[courseTypeId] = $(course).data "id"
 
   $("#courses-modal").on "hidden.bs.modal", (event) ->
     $("#courses-modal").removeAttr "data-course-type-id" 
     $(event.target).find(".modal-body").first().empty()
 
+  $("#weekday-panes").on "click", "#make-order-button", (event) ->
+    alert = $(".alert").first()
+    alertContent = $(alert).find(".alert-content").first()
+    message = ""
+    $.post "orders",
+      "courses": order,
+      (data) ->
+        if data.code == 200
+          alert.addClass "alert-success"
+          alertContent.text data.message
+        else
+          console.log Object.values(data.errors)
+          alert.addClass "alert-danger"
+          alertContent.text Object.values(data.errors).join(' | ')
+        alert.css display: "initial"

@@ -11,6 +11,10 @@
     -#= button_to "Sign out", destroy_user_session_path, method: :delete, class: "btn btn-default"
     = render "layouts/header"
     %div.container
-      %p.notice= notice
-      %p.alert= alert
+      %div.row
+        %div.alert.alert-dismissible.fade.in.col-md-7{ role: "alert" }
+          %button.close{ type: "button", data: { dismiss: "alert" },
+        aria: { label: "Close" }}
+            %span{ aria: { hidden: "true" }} &times;
+          %span.alert-content
       = yield

@@ -1,5 +1,5 @@
-class UserPolicy < ApplicationPolicy
-  def index?
+class CoursePolicy < ApplicationPolicy
+  def create?
     user.admin?
   end
 

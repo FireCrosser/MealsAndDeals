@@ -1,5 +1,5 @@
-%div
-  %p
-    Name: #{user.name}
-  %p
-    Email: #{user.email}
+%tr.user-row{ href: "/users/#{user.id}" }
+  %td
+    = user.name
+  %td
+    = user.email

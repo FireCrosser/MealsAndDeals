@@ -1,2 +1,8 @@
-%h3 Users:
-= render @users
+= content_for :head do
+  = javascript_include_tag 'users'
+
+%table.table.table-hover
+  %tr
+    %th Name
+    %th Email
+  = render @users

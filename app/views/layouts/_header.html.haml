@@ -11,8 +11,12 @@
               = link_to "Home", root_path
             %li
               = link_to "Menu", courses_path
-            %li
-              = link_to "Orders", orders_path
+            - if policy(:order).index?
+              %li
+                = link_to "Orders", orders_path
+            - if policy(:user).index?
+              %li
+                = link_to "Users", users_path
         %ul.nav.navbar-nav.navbar-right
           - if user_signed_in?
             %li

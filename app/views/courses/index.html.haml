@@ -7,11 +7,10 @@
   %div.tab-content{ id: "weekday-panes" }
 
 = render "modals"
-
-%button.btn.btn-default.action-button{ type: "button",
-  id: "make-order-button"} Order your best lanch
-
--#%button.btn.btn-default.add-course-with-type{ type: "button",
-  -#data: { toggle: "modal", target: "#add-course-with-type-modal" },
-  -#id: "add-course-with-type-button"} "Add course"
+- if current_user.admin?
+  %button.btn.btn-default.action-button{ type: "button",
+    id: "make-order-button"} Order your best lanch
+- else
+  %button.btn.btn-default.action-button{ type: "button",
+    id: "add-course-with-type-button"} Order your best lanch
 

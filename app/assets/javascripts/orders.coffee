@@ -24,51 +24,46 @@ getFormattedDate = (date, format) ->
     .replace("%M", month)
     .replace("%Y", year)
 
-loadCoursesData = (pane, date, weekday) ->
+loadOrdersData = (pane, date, weekday) ->
   localDate = new Date(date)
   if (weekdays[weekday] == undefined || $.isEmptyObject(weekdays[weekday]))
-    coursesWrapper = $('<div></div').appendTo pane
-    coursesWrapper.attr class: 'col-md-10 col-md-offset-1 courses-wrapper'
-    if localDate.getTime() == todayDate.getTime()
-      actionButtonWrapper = $("<div></div>")
-      actionButtonWrapper.attr class: 'action-button-wrapper'
-      actionButton = $(".action-button").clone()
-      $(actionButton).css display: "initial"
-      actionButton.appendTo actionButtonWrapper
-      actionButtonWrapper.appendTo coursesWrapper
-    $.get '/courses',
+    ordersWrapper = $('<div></div').appendTo pane
+    ordersWrapper.attr class: 'col-md-10 col-md-offset-1 orders-wrapper'
+    ordersPanel = $('.orders').first()
+    panelId = 0
+    $.get '/orders',
       date: getFormattedDate(localDate, "%Y-%M-%D"), 
       (data) ->
+        console.log data
         weekdays[weekday] = data
-        if data.length == 0
-          coursesWrapper.append "No courses now"
-        else
+        if data.length != 0
           for key, value of data
-            courseType = $("<div></div>")
-            courseType.attr class: 'course-type'
-            courseType.data "course-type-id": key 
-            courseType.data "toggle": "modal"
-            courseType.data "target": "#courses-modal"
-            courseTypeName = $("<h3></h3>")
-            courseTypeName.attr class: 'course-type-name' 
-            courseTypeName.text value.name
-            courseAmount = $("<h5></h5>")
-            courseAmount.attr class: 'course-type-amount' 
-            courseAmount.text "Amount: " + value.courses.length
-            courseTypeName.appendTo courseType
-            courseAmount.appendTo courseType
-            if localDate.getTime() == todayDate.getTime()
-              addCourseWrapper = $("<div></div>")
-              addCourseWrapper.attr class: 'add-course-wrapper'
-              addCourseButton = $("<a></a>")
-              addCourseButton.attr type: "button"
-              addCourseButton.attr class: 'btn btn-link add-course'
-              addCourseButton.text "Add"
-              addCourseButton.data "toggle": "modal"
-              addCourseButton.data "target": "#add-course-modal"
-              addCourseButton.appendTo addCourseWrapper
-              addCourseWrapper.appendTo courseType
-            courseType.appendTo coursesWrapper
+            user = value.user
+            orderPanel = $('#order-panel-sample').clone()
+            orderPanel.show()
+            panelHeader = $(orderPanel).find(".order-header").first()
+            panelHeader.attr "data-target": "#order-panel-content-" + panelId
+            panelHeaderText = $(panelHeader).find(".order-header-text").first()
+            console.log panelHeader
+            panelHeader.text '#' + value.id + ', created at: ' + value.created_at
+            panelBody = $(orderPanel).find(".order-body").first()
+            panelBody.attr id: "order-panel-content-" + panelId
+            tBody = $(panelBody).find("tbody").first()
+            lunchCost = 0
+            for course in value.courses
+              tr = $("<tr></tr>").appendTo tBody
+              nameTd = $("<td></td>").appendTo tr
+              nameTd.text course.name
+              priceTd = $("<td></td>").appendTo tr
+              priceTd.text course.price
+              typeTd = $("<td></td>").appendTo tr
+              typeTd.text course.course_type.name
+              lunchCost += course.price
+            lunchCostHeader = $("<h5><?h5>").appendTo panelBody
+            lunchCostHeader.attr class: "order-cost"
+            lunchCostHeader.text "Lunch cost: " + lunchCost
+            orderPanel.appendTo ordersPanel
+            panelId++
 
 $ ->
   tabs = $("#weekday-tabs")
@@ -92,7 +87,7 @@ $ ->
     weekdayPane.attr class: "tab-pane fade in weekday-pane"
     if currentWeekDay.getTime() == todayDate.getTime()
       weekdayPane.addClass "active" 
-      loadCoursesData(weekdayPane, todayDate, day)
+      loadOrdersData(weekdayPane, todayDate, day)
     weekdayPane.attr role: "tabpanel"
     weekdayPane.attr id: day
     weekdayPane.data "weekday": day
@@ -107,7 +102,7 @@ $ ->
     pane = $('#weekday-panes div' + paneId)
     date = firstTabLink.data "date"
     day = firstTabLink.data "weekday"
-    loadCoursesData(pane, date, day)
+    loadOrdersData(pane, date, day)
     firstTab.addClass "active"
     $(".weekday-pane:first").addClass "active"
 
@@ -117,4 +112,4 @@ $ ->
     day = $(target).data "weekday"
     paneId = $(target).attr "href"
     pane = $('#weekday-panes div' + paneId)
-    loadCoursesData(pane, date, day)
+    loadOrdersData(pane, date, day)

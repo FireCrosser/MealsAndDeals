@@ -5,17 +5,12 @@ class OrdersController < ApplicationController
   def index
     if params.has_key?(:date)
       @orders = Order.by_date_from_string(params[:date])
+      render json: @orders, only: [:id, :created_at],
+        include: [courses: { include: :course_type }, user: { only: [:id, :email] }]
     else
       @orders = Order.all
     end
 
-    respond_to do |format|
-      format.html
-      format.json {
-        render json: @orders, only: [:id, :created_at],
-        include: [user: {only: [:id, :email] }]
-      }
-    end
   end
 
   def today

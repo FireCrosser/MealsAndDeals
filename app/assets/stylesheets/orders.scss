@@ -1,8 +1,22 @@
 .orders {
 
   .order-panel {
+
     .order-header {
       cursor: pointer;
     }
+
+    .order-body {
+      .table {
+        margin-bottom: 10px;
+      }
+      .order-cost {
+        margin: 10px;
+      }
+    }
   }
+}
+
+#order-panel-sample {
+  display: none;
 }

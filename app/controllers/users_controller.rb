@@ -5,4 +5,7 @@ class UsersController < ApplicationController
     authorize User
     @users = User.all
   end
+
+  def show
+  end
 end

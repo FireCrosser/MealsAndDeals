@@ -4,6 +4,14 @@ class Order < ApplicationRecord
   has_many :courses, through: :ordered_courses
   validate :has_exactly_one_course_of_every_type
 
+  scope :by_date, -> (date) { where(created_at:
+                                    date.midnight..date.end_of_day) }
+
+  def self.by_date_from_string(date) 
+    pdate = Date.parse(date)
+    return self.where(created_at: pdate.midnight..pdate.end_of_day)
+  end
+
   private
   def has_exactly_one_course_of_every_type
     course_types = CourseType.all

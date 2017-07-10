@@ -1,2 +1,9 @@
+= content_for :head do
+  = javascript_include_tag 'orders'
+%div.tabs-wrapper
+  %ul.nav.nav-pills{ role: "tablist", id: "weekday-tabs" }
+
+  %div.tab-content{ id: "weekday-panes" }
+
 %div.panel-group.orders.col-md-10.col-md-offset-1
   = render "order"

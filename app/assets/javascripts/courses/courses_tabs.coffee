@@ -80,12 +80,12 @@ $ ->
       weekdayTab.addClass "active" 
     dayLink = $("<a></a>")
     dayLink.attr role: "tab"
-    dayLink.data "toggle": "tab"
-    dayLink.data "date": currentWeekDay
-    dayLink.data "weekday": day
+    dayLink.attr "data-toggle": "tab"
+    dayLink.attr "data-date": currentWeekDay
+    dayLink.attr "data-weekday": day
     dayLink.attr href: "#" + day.toLowerCase()
     dayLink.text day.charAt(0).toUpperCase() + day.slice(1) + ' ' + getFormattedDate(currentWeekDay, "%D.%M.%Y")
-    weekdayTab.append(dayLink)
+    weekdayTab.append dayLink
     tabs.append(weekdayTab)
 
     weekdayPane = $("<div></div>")

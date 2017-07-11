@@ -74,7 +74,7 @@ $ ->
       weekdayTab.addClass "active" 
     dayLink = $("<a></a>")
     dayLink.attr role: "tab"
-    dayLink.data "toggle": "tab"
+    dayLink.attr "data-toggle": "tab"
     dayLink.data "date": currentWeekDay
     dayLink.data "weekday": day
     dayLink.attr href: "#" + day.toLowerCase()

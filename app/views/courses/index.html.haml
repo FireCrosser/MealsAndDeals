@@ -9,8 +9,11 @@
 = render "modals"
 - if current_user.admin?
   %button.btn.btn-default.action-button{ type: "button",
-    id: "make-order-button"} Order your best lanch
+    id: "add-course-with-type-button", data: { toggle: "modal",
+    target: "#add-course-with-type-modal" }} Add course
+  %div.add-course-wrapper.action-button-2-wrapper
+    %a.btn.btn-link-add-course{ type: "link", data: { toggle: "modal",
+      target: "#add-course-modal" }} Add
 - else
   %button.btn.btn-default.action-button{ type: "button",
-    id: "add-course-with-type-button"} Order your best lanch
-
+    id: "make-order-button"} Order your best lanch

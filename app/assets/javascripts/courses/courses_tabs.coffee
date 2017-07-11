@@ -33,7 +33,7 @@ loadCoursesData = (pane, date, weekday) ->
       actionButtonWrapper = $("<div></div>")
       actionButtonWrapper.attr class: 'action-button-wrapper'
       actionButton = $(".action-button").clone()
-      $(actionButton).css display: "initial"
+      $(actionButton).css display: "inline"
       actionButton.appendTo actionButtonWrapper
       actionButtonWrapper.appendTo coursesWrapper
     $.get '/courses',
@@ -41,12 +41,12 @@ loadCoursesData = (pane, date, weekday) ->
       (data) ->
         weekdays[weekday] = data
         if data.length == 0
-          coursesWrapper.append "No courses now"
+          coursesWrapper.append "No scourses now"
         else
           for key, value of data
             courseType = $("<div></div>")
             courseType.attr class: 'course-type'
-            courseType.data "course-type-id": key 
+            courseType.data "course-type-id": value.id 
             courseType.data "toggle": "modal"
             courseType.data "target": "#courses-modal"
             courseTypeName = $("<h3></h3>")
@@ -58,16 +58,10 @@ loadCoursesData = (pane, date, weekday) ->
             courseTypeName.appendTo courseType
             courseAmount.appendTo courseType
             if localDate.getTime() == todayDate.getTime()
-              addCourseWrapper = $("<div></div>")
-              addCourseWrapper.attr class: 'add-course-wrapper'
-              addCourseButton = $("<a></a>")
-              addCourseButton.attr type: "button"
-              addCourseButton.attr class: 'btn btn-link add-course'
-              addCourseButton.text "Add"
-              addCourseButton.data "toggle": "modal"
-              addCourseButton.data "target": "#add-course-modal"
-              addCourseButton.appendTo addCourseWrapper
-              addCourseWrapper.appendTo courseType
+              actionButton2Wrapper = $('.action-button-2-wrapper')
+              if actionButton2Wrapper.length != 0
+                $(actionButton2Wrapper[0]).clone().css('display', '')
+                  .appendTo courseType
             courseType.appendTo coursesWrapper
 
 $ ->
@@ -80,9 +74,9 @@ $ ->
       weekdayTab.addClass "active" 
     dayLink = $("<a></a>")
     dayLink.attr role: "tab"
-    dayLink.attr "data-toggle": "tab"
-    dayLink.attr "data-date": currentWeekDay
-    dayLink.attr "data-weekday": day
+    dayLink.data "toggle": "tab"
+    dayLink.data "date": currentWeekDay
+    dayLink.data "weekday": day
     dayLink.attr href: "#" + day.toLowerCase()
     dayLink.text day.charAt(0).toUpperCase() + day.slice(1) + ' ' + getFormattedDate(currentWeekDay, "%D.%M.%Y")
     weekdayTab.append dayLink
@@ -134,7 +128,7 @@ $ ->
       courseTypeId = $(courseType).data "course-type-id"
       $(modal).data "course-type-id": courseTypeId
       weekday = $(event.target).closest(".weekday-pane").data "weekday"
-      courses = weekdays[weekday][courseTypeId].courses
+      courses = weekdays[weekday][courseTypeId - 1].courses
       modalBody = $(modal).find(".modal-body").first()
       for course in courses
         courseDiv = $("<div></dev>")
@@ -164,7 +158,7 @@ $ ->
       order[courseTypeId] = $(course).data "id"
 
   $("#courses-modal").on "hidden.bs.modal", (event) ->
-    $("#courses-modal").removeAttr "data-course-type-id" 
+    $("#courses-modal").data "course-type-id": "" 
     $(event.target).find(".modal-body").first().empty()
 
   $("#weekday-panes").on "click", "#make-order-button", (event) ->
@@ -178,7 +172,27 @@ $ ->
           alert.addClass "alert-success"
           alertContent.text data.message
         else
-          console.log Object.values(data.errors)
           alert.addClass "alert-danger"
           alertContent.text Object.values(data.errors).join(' | ')
         alert.css display: "initial"
+
+  processCreatingCourse = (modalId, data) ->
+    $(modalId).modal 'hide'
+    alert = $(".alert").first()
+    alertContent = $(alert).find(".alert-content").first()
+    if data.code == 200
+      alert.addClass "alert-success"
+      alertContent.text data.message
+    else
+      alert.addClass "alert-danger"
+      alertContent.text Object.values(data.errors).join(' | ')
+    alert.css display: "initial"
+
+
+  $('#add-course-modal').find('form').first().on "ajax:success",
+    (event, data, status, xhr) ->
+      processCreatingCourse('#add-course-modal', data)
+
+  $('#add-course-with-type-modal').find('form').first().on "ajax:success",
+    (event, data, status, xhr) ->
+      processCreatingCourse('#add-course-with-type-modal', data)

@@ -1,4 +1,6 @@
 class CoursesController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     if params.has_key?(:date)
       @course_types_with_courses = CourseType.with_courses_by_date(params[:date])
@@ -10,8 +12,13 @@ class CoursesController < ApplicationController
   
   def create
     @course = Course.new
+    authorize @course
     @course.attributes = course_params
-    @course.save
+    if @course.save
+      render json: { code: 200, message: "Course successfully created! Please, reload to see changes."}
+    else
+      render json: { code: 400, errors: @course.errors.messages }
+    end
   end
 
   private

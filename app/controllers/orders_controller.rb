@@ -3,6 +3,7 @@ class OrdersController < ApplicationController
   before_action :authenticate_user_with_auth_token, only: [:today]
 
   def index
+    authorize Order
     if params.has_key?(:date)
       @orders = Order.by_date_from_string(params[:date])
       render json: @orders, only: [:id, :created_at],
@@ -15,11 +16,15 @@ class OrdersController < ApplicationController
 
   def today
     @orders = Order.by_date(Date.today)
-    render json: @orders
+      render json: @orders, only: [:id, :created_at],
+        include: [:courses, user: { only: [:id, :email] }]
+    #render json: @orders, only: [:id, :created_at],
+      #include: [user: {}, courses: { only: [:id, :price, :name], include: [course_type: { only: [:id, :name] }]}]
   end
 
   def create
     order = Order.new
+    authorize order
     courses = params[:courses]
     order.user_id = current_user.id
     courses.each { |key, id| order.courses << Course.find_by_id(id) } \
